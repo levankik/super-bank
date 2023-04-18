@@ -1,5 +1,8 @@
 package ge.softgen.softlab.superbank;
+
 import ge.softgen.softlab.superbank.DTO.TransferBalance;
+import ge.softgen.softlab.superbank.entity.Balance;
+import ge.softgen.softlab.superbank.service.BankService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -7,18 +10,19 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 
 @Slf4j
-@RestController("/balance")
+@RestController
+@RequestMapping("/balance")
 @AllArgsConstructor
 public class BankController {
     private final BankService bankService;
 
     @GetMapping("/{accountId}")
-    public BigDecimal getBalance(@PathVariable Long accountId) {
+    public Balance getBalance(@PathVariable Long accountId) {
         return bankService.getBalance(accountId);
     }
 
     @PostMapping("/add")
-    public BigDecimal addMoney(@RequestBody TransferBalance transferBalance) {
+    public Balance addMoney(@RequestBody TransferBalance transferBalance) {
         return bankService.addMoney(transferBalance.getTo(), transferBalance.getAmount());
     }
 
@@ -27,9 +31,4 @@ public class BankController {
           bankService.makeTransfer(transferBalance);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public String handle(IllegalArgumentException e) {
-        log.error(e.getMessage());
-        return "I am broken";
-    }
 }
